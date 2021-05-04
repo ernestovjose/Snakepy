@@ -76,8 +76,6 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
-        self.game_over_sound = pygame.mixer.Sound('resources/game_over.mp3')
-        self.chewing_sound = pygame.mixer.Sound('resources/chewing.mp3')
         self.play_background_music()
         self.surface = pygame.display.set_mode((1200, 720))
         self.snake = Snake(self.surface, 3)
@@ -98,8 +96,11 @@ class Game:
         pygame.mixer.music.load("resources/background.mp3")
         pygame.mixer.music.play()
     
-    def play_sound(self, sound):
-        sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
+    def play_sound(self, sound_name):
+        if sound_name == "chewing":
+            sound = pygame.mixer.Sound("resources/chewing.mp3")
+        elif sound_name == 'game_over':
+            sound = pygame.mixer.Sound("resources/game_over.mp3")
         pygame.mixer.Sound.play(sound)
 
     def reset(self):
