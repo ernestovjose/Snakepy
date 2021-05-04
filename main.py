@@ -74,21 +74,43 @@ class Game:
         pygame.init()
         pygame.mixer.init()
         self.game_over_sound = pygame.mixer.Sound('resources/game_over.mp3')
+        self.chewing_sound = pygame.mixer.Sound('resources/chewing.mp3')
+        self.play_background_music()
         self.surface = pygame.display.set_mode((1000, 800))
         self.snake = Snake(self.surface, 3)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
 
+    def play_background_music(self):
+        # background = pygame.mixer.Sound(f'resources/background.mp3')
+        pygame.mixer.music.load("resources/background.mp3")
+        pygame.mixer.music.play()
+
+    
+    def play_sound(self, sound):
+        sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
+        pygame.mixer.Sound.play(sound)
+
     def reset(self):
         self.snake = Snake(self.surface, 3)
         self.apple = Apple(self.surface)
 
     def game_over(self):
+        pygame.mixer.music.pause()
+        self.play_sound('game_over')
         self.surface.fill(BACKGROUND_COLOR)
         font = pygame.font.SysFont('arial', 50, bold=True, italic=False)
+        font1 = pygame.font.SysFont('arial', 30, bold=True, italic=False)
         end_message = font.render(f"YOU DIED", True, (139, 0, 0))
         self.surface.blit(end_message, (500, 400))
+        pygame.display.flip()
+        time.sleep(5)
+        if self.snake.length*20 == 60:
+            score = font1.render(f"Score: 0 press enter to reset", True, (255, 255, 255))
+        else:
+            score = font1.render(f"Score: {self.snake.length*20} Press enter to reset", True, (255, 255, 255))
+        self.surface.blit(score, (500, 450))
         pygame.display.flip()
 
     def display_score(self):
@@ -118,6 +140,7 @@ class Game:
         pygame.display.flip()
 
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
+            self.play_sound('chewing')    
             self.snake.increase_tail()
             self.apple.move()
 
@@ -139,21 +162,22 @@ class Game:
                         running = False
 
                     if event.key == K_RETURN:
+                        pygame.mixer.music.unpause()
                         pause = False
 
-                    # if not pause:    
+                    if not pause:    
 
-                    if event.key == K_UP:
-                        self.snake.move_up()
+                        if event.key == K_UP:
+                            self.snake.move_up()
 
-                    if event.key == K_DOWN:
-                            self.snake.move_down()
+                        if event.key == K_DOWN:
+                                self.snake.move_down()
 
-                    if event.key == K_RIGHT:
-                        self.snake.move_right()
+                        if event.key == K_RIGHT:
+                            self.snake.move_right()
 
-                    if event.key == K_LEFT:
-                        self.snake.move_left()
+                        if event.key == K_LEFT:
+                            self.snake.move_left()
 
                 elif event.type == QUIT:
                     running = False
@@ -162,7 +186,6 @@ class Game:
                     self.play()
 
             except Exception as e:
-                pygame.mixer.Sound.play(self.game_over_sound)
                 self.game_over()
                 pause = True
                 self.reset()
