@@ -5,6 +5,7 @@ import random
 
 SIZE = 40
 BACKGROUND_COLOR = (0, 0, 0)
+dificulty = 0.2
 
 class Apple:
     def __init__(self, parent_screen):
@@ -18,8 +19,11 @@ class Apple:
         pygame.display.flip()  
 
     def move(self):
-       self.x = random.randint(1, 20)*SIZE
-       self.y = random.randint(1, 20)*SIZE
+        while True:
+            self.x = random.randint(1, 29)*SIZE
+            self.y = random.randint(1, 17)*SIZE
+            if self.x > 0 and self.x <= 1200 and self.y > 0 and self.y <= 720:
+                break;
 
 class Snake:
     def __init__(self, surface, length):
@@ -36,7 +40,6 @@ class Snake:
         self.y.append(-1)
 
     def draw(self):
-        self.parent_screen.fill((252, 157, 3)) # sin esta linea el bloque anterior se queda pintado
         for i in range(self.length):
             self.parent_screen.blit(self.block, (self.x[i], self.y[i]))
         pygame.display.flip()
@@ -76,17 +79,24 @@ class Game:
         self.game_over_sound = pygame.mixer.Sound('resources/game_over.mp3')
         self.chewing_sound = pygame.mixer.Sound('resources/chewing.mp3')
         self.play_background_music()
-        self.surface = pygame.display.set_mode((1000, 800))
+        self.surface = pygame.display.set_mode((1200, 720))
         self.snake = Snake(self.surface, 3)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
+    
+    def change_dificulty(self):
+        global dificulty
+        if (self.snake.length) % 5 == 0:
+            dificulty -= 0.03
+
+    def render_background(self):
+        bg = pygame.image.load("resources/back.png")
+        self.surface.blit(bg, (0,0))
 
     def play_background_music(self):
-        # background = pygame.mixer.Sound(f'resources/background.mp3')
         pygame.mixer.music.load("resources/background.mp3")
         pygame.mixer.music.play()
-
     
     def play_sound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
@@ -103,14 +113,14 @@ class Game:
         font = pygame.font.SysFont('arial', 50, bold=True, italic=False)
         font1 = pygame.font.SysFont('arial', 30, bold=True, italic=False)
         end_message = font.render(f"YOU DIED", True, (139, 0, 0))
-        self.surface.blit(end_message, (500, 400))
+        self.surface.blit(end_message, (600, 400))
         pygame.display.flip()
         time.sleep(5)
         if self.snake.length*20 == 60:
             score = font1.render(f"Score: 0 press enter to reset", True, (255, 255, 255))
         else:
             score = font1.render(f"Score: {self.snake.length*20} Press enter to reset", True, (255, 255, 255))
-        self.surface.blit(score, (500, 450))
+        self.surface.blit(score, (600, 450))
         pygame.display.flip()
 
     def display_score(self):
@@ -118,9 +128,9 @@ class Game:
         score = font.render(f"Score: {self.snake.length*20}", True, (255, 255, 255))
         if self.snake.length <=3:
             score = font.render(f"Score: 0", True, (255, 255, 255))
-            self.surface.blit(score, (800, 10))    
+            self.surface.blit(score, (1000, 10))    
         else:
-            self.surface.blit(score, (800, 10))    
+            self.surface.blit(score, (1000, 10))    
 
     def is_collision(self, x1, y1, x2, y2):
         if x1 >= x2 and x1 < x2 + SIZE:
@@ -134,6 +144,7 @@ class Game:
         return False    
 
     def play(self):
+        self.render_background()
         self.snake.walk()
         self.apple.draw()
         self.display_score()
@@ -142,16 +153,18 @@ class Game:
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
             self.play_sound('chewing')    
             self.snake.increase_tail()
+            self.change_dificulty()
             self.apple.move()
 
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 raise "Game Over"
 
-        if self.is_collision_wall(self.snake.x[0], self.snake.y[0], 1000, 800):
+        if self.is_collision_wall(self.snake.x[0], self.snake.y[0], 1200, 720):
             raise "Game Over"      
 
     def run(self):
+        global dificulty
         running = True
         pause = False
 
@@ -162,6 +175,7 @@ class Game:
                         running = False
 
                     if event.key == K_RETURN:
+                        dificulty = 0.2
                         pygame.mixer.music.unpause()
                         pause = False
 
@@ -186,11 +200,12 @@ class Game:
                     self.play()
 
             except Exception as e:
+                print(e)
                 self.game_over()
                 pause = True
                 self.reset()
 
-            time.sleep(0.1)
+            time.sleep(dificulty)
 
 
 if __name__ == "__main__":

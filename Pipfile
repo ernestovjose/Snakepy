@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 pygame = "*"
+auto-py-to-exe = "*"
 
 [dev-packages]
 
