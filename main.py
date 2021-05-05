@@ -85,7 +85,7 @@ class Game:
     
     def change_dificulty(self):
         global dificulty
-        if (self.snake.length) % 5 == 0:
+        if (self.snake.length) % 5 == 0 and dificulty >= 0.04:
             dificulty -= 0.03
 
     def render_background(self):
@@ -94,7 +94,7 @@ class Game:
 
     def play_background_music(self):
         pygame.mixer.music.load(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\background.mp3")
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(-1)
     
     def play_sound(self, sound_name):
         if sound_name == "chewing":
