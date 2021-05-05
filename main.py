@@ -9,7 +9,7 @@ dificulty = 0.2
 
 class Apple:
     def __init__(self, parent_screen):
-        self.image = pygame.image.load("resources/apple.jpg").convert()
+        self.image = pygame.image.load(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\apple.jpg").convert()
         self.parent_screen = parent_screen
         self.x = SIZE*2
         self.y = SIZE*2
@@ -29,7 +29,7 @@ class Snake:
     def __init__(self, surface, length):
         self.length = length
         self.parent_screen = surface
-        self.block = pygame.image.load("resources/block.jpg").convert()
+        self.block = pygame.image.load(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\block.jpg").convert()
         self.x = [SIZE]*length
         self.y = [SIZE]*length
         self.direction = 'right'
@@ -89,18 +89,18 @@ class Game:
             dificulty -= 0.03
 
     def render_background(self):
-        bg = pygame.image.load("resources/back.png")
+        bg = pygame.image.load(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\back.png")
         self.surface.blit(bg, (0,0))
 
     def play_background_music(self):
-        pygame.mixer.music.load("resources/background.mp3")
+        pygame.mixer.music.load(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\background.mp3")
         pygame.mixer.music.play()
     
     def play_sound(self, sound_name):
         if sound_name == "chewing":
-            sound = pygame.mixer.Sound("resources/chewing.mp3")
+            sound = pygame.mixer.Sound(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\chewing.mp3")
         elif sound_name == 'game_over':
-            sound = pygame.mixer.Sound("resources/game_over.mp3")
+            sound = pygame.mixer.Sound(r"C:\Users\ernes\Documents\Desarrollo\pygame\Snakepy\resources\game_over.mp3")
         pygame.mixer.Sound.play(sound)
 
     def reset(self):
